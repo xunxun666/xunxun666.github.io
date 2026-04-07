@@ -74,7 +74,7 @@
 
       <h2>我想展示的内容</h2>
       <ul>
-        <a class="button" href="/person">个人介绍</a>
+        <li><a class="button" href="/person">个人介绍</a></li>
         <li>项目展示</li>
         <li>联系方式（no）</li>
         <li>？</li>
@@ -83,5 +83,17 @@
       <a class="button" href="https://github.com/xunxun666" target="_blank">查看我的 GitHub</a>
     </div>
   </div>
+
+  <script>
+    const originalTitle = document.title;
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        document.title = "别走🥺";
+      } else {
+        document.title = originalTitle;
+      }
+    });
+  </script>
 </body>
 </html>
