@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+    }
+    video {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      background: black;
+    }
+    #hint {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <video
+    id="video"
+    autoplay
+    muted
+    playsinline
+    preload="auto"
+  >
+    <source src="./rickroll.mp4" type="video/mp4" />
+  </video>
+
+  <div id="hint">Loading contact...</div>
+
+  <script>
+    const video = document.getElementById("video");
+    const hint = document.getElementById("hint");
+
+    // 尝试尽快开始播放
+    const startPlay = async () => {
+      try {
+        await video.play();
+        hint.style.display = "none";
+      } catch (e) {
+        // 某些设备会拦截自动播放
+        hint.innerText = "Tap anywhere";
+        document.body.addEventListener("click", async () => {
+          try {
+            await video.play();
+            hint.style.display = "none";
+          } catch (_) {}
+        }, { once: true });
+      }
+    };
+
+    // 视频一能播放就立刻播
+    video.addEventListener("canplay", startPlay);
+    window.addEventListener("load", startPlay);
+
+    // 可选：1秒后取消静音（很多浏览器必须先静音自动播放）
+    setTimeout(() => {
+      try {
+        video.muted = false;
+      } catch (e) {}
+    }, 1000);
+  </script>
+</body>
+</html>
