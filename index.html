@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>xunxun666的网站</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <style>
     body {
       margin: 0;
@@ -85,17 +86,28 @@
   </div>
 
   <script>
-  const defaultTitle = "xunxun666的网站";
+    const defaultTitle = "xunxun666的网站";
+    let titleTimer = null;
 
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden) {
-      document.title = "ヽ(；д； )别走—xun窝";
-    } else {
-      document.title = "(≧▽≦)欢迎回家—xun窝";
+    document.addEventListener("visibilitychange", function () {
+      if (titleTimer) {
+        clearTimeout(titleTimer);
+        titleTimer = null;
+      }
 
-      setTimeout(() => {
-        document.title = defaultTitle;
-      }, 5000);
-    }
-  });
-</script>
+      if (document.hidden) {
+        document.title = "ヽ(；д； )别走—xun窝";
+      } else {
+        document.title = "(≧▽≦)欢迎回家—xun窝";
+
+        titleTimer = setTimeout(() => {
+          if (!document.hidden) {
+            document.title = defaultTitle;
+          }
+          titleTimer = null;
+        }, 5000);
+      }
+    });
+  </script>
+</body>
+</html>
