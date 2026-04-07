@@ -85,15 +85,17 @@
   </div>
 
   <script>
-    const originalTitle = document.title;
+  const defaultTitle = "xunxun666的网站";
 
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) {
-        document.title = "ヽ(；д； )别走—xun窝";
-      } else {
-        document.title = originalTitle;
-      }
-    });
-  </script>
-</body>
-</html>
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      document.title = "ヽ(；д； )别走—xun窝";
+    } else {
+      document.title = "(≧▽≦)欢迎回家—xun窝";
+
+      setTimeout(() => {
+        document.title = defaultTitle;
+      }, 5000);
+    }
+  });
+</script>
