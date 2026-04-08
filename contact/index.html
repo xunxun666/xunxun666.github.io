@@ -36,7 +36,7 @@
   </style>
 </head>
 <body>
-  <div id="overlay">Loading...</div>
+  <div id="overlay">点击屏幕查看个人简介</div>
 
   <video
     id="video"
@@ -63,11 +63,7 @@
     document.title = initialTitle;
 
     function updateVisibleTitle() {
-      if (hasStartedPlaying) {
-        document.title = playingTitle;
-      } else {
-        document.title = initialTitle;
-      }
+      document.title = hasStartedPlaying ? playingTitle : initialTitle;
     }
 
     function setPlayingState() {
@@ -85,11 +81,11 @@
         setPlayingState();
       } catch (e) {
         overlay.innerText = "点击屏幕继续";
+        overlay.style.display = "flex";
       }
     }
 
     window.addEventListener("load", tryPlayMuted);
-    video.addEventListener("canplay", tryPlayMuted);
 
     video.addEventListener("playing", function () {
       setPlayingState();
@@ -97,19 +93,13 @@
 
     document.body.addEventListener("click", async function () {
       try {
-        if (!hasStartedPlaying) {
-          await video.play();
-          setPlayingState();
-        }
-
         if (!userEnabledSound) {
-          video.muted = false;
           userEnabledSound = true;
+          video.muted = false;
         }
 
         await video.play();
-        overlay.style.display = "none";
-        updateVisibleTitle();
+        setPlayingState();
       } catch (e) {
         overlay.innerText = "点击屏幕继续";
         overlay.style.display = "flex";
@@ -122,10 +112,19 @@
         video.pause();
       } else {
         updateVisibleTitle();
+
         try {
+          if (userEnabledSound) {
+            video.muted = false;
+          } else {
+            video.muted = true;
+          }
+
           await video.play();
+          overlay.style.display = "none";
         } catch (e) {
-          overlay.innerText = userEnabledSound ? "点击继续播放" : "点击开启声音";
+          updateVisibleTitle();
+          overlay.innerText = userEnabledSound ? "点击恢复声音" : "点击继续播放";
           overlay.style.display = "flex";
         }
       }
