@@ -36,7 +36,7 @@
   </style>
 </head>
 <body>
-  <div id="overlay">点击屏幕查看个人简介</div>
+  <div id="overlay">Loading...</div>
 
   <video
     id="video"
@@ -58,74 +58,57 @@
     const hiddenTitle = "点开有惊喜";
 
     let hasStartedPlaying = false;
-    let userEnabledSound = false;
 
     document.title = initialTitle;
 
-    function updateVisibleTitle() {
-      document.title = hasStartedPlaying ? playingTitle : initialTitle;
-    }
-
-    function setPlayingState() {
+    function setPlayingTitle() {
       hasStartedPlaying = true;
       if (!document.hidden) {
         document.title = playingTitle;
       }
-      overlay.style.display = "none";
     }
 
-    async function tryPlayMuted() {
+    async function tryPlay() {
       try {
-        video.muted = true;
         await video.play();
-        setPlayingState();
+        overlay.style.display = "none";
+        setPlayingTitle();
       } catch (e) {
-        overlay.innerText = "点击屏幕继续";
-        overlay.style.display = "flex";
+        overlay.innerText = "Tap to continue";
       }
     }
 
-    window.addEventListener("load", tryPlayMuted);
+    video.addEventListener("canplay", tryPlay);
+    window.addEventListener("load", tryPlay);
 
     video.addEventListener("playing", function () {
-      setPlayingState();
+      overlay.style.display = "none";
+      setPlayingTitle();
     });
 
-    document.body.addEventListener("click", async function () {
+    document.body.addEventListener("click", async () => {
       try {
-        if (!userEnabledSound) {
-          userEnabledSound = true;
-          video.muted = false;
-        }
-
         await video.play();
-        setPlayingState();
-      } catch (e) {
-        overlay.innerText = "点击屏幕继续";
-        overlay.style.display = "flex";
-      }
+        video.muted = false;
+        overlay.style.display = "none";
+        setPlayingTitle();
+      } catch (e) {}
     });
 
-    document.addEventListener("visibilitychange", async function () {
+    setTimeout(() => {
+      try {
+        video.muted = false;
+      } catch (e) {}
+    }, 800);
+
+    document.addEventListener("visibilitychange", function () {
       if (document.hidden) {
         document.title = hiddenTitle;
-        video.pause();
       } else {
-        updateVisibleTitle();
-
-        try {
-          if (userEnabledSound) {
-            video.muted = false;
-          } else {
-            video.muted = true;
-          }
-
-          await video.play();
-          overlay.style.display = "none";
-        } catch (e) {
-          updateVisibleTitle();
-          overlay.innerText = userEnabledSound ? "点击恢复声音" : "点击继续播放";
-          overlay.style.display = "flex";
+        if (hasStartedPlaying) {
+          document.title = playingTitle;
+        } else {
+          document.title = initialTitle;
         }
       }
     });
