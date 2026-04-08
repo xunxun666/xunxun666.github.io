@@ -101,12 +101,16 @@
       } catch (e) {}
     }, 800);
 
-    document.addEventListener("visibilitychange", function () {
+    document.addEventListener("visibilitychange", async function () {
       if (document.hidden) {
         document.title = hiddenTitle;
+        video.pause();
       } else {
         if (hasStartedPlaying) {
           document.title = playingTitle;
+          try {
+            await video.play();
+          } catch (e) {}
         } else {
           document.title = initialTitle;
         }
