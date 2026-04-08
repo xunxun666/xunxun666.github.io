@@ -86,27 +86,60 @@
   </div>
 
   <script>
-    const defaultTitle = "xunxun666的网站";
+    const defaultTitle = document.title;
     let titleTimer = null;
+    let isInternalNavigation = false;
 
-    document.addEventListener("visibilitychange", function () {
+    document.querySelectorAll('a[href]').forEach(link => {
+      link.addEventListener('click', function () {
+        const href = this.getAttribute('href');
+        if (!href) return;
+
+        if (
+          href.startsWith('/') ||
+          href.startsWith('./') ||
+          href.startsWith('../') ||
+          href.startsWith('person/') ||
+          href.startsWith('projects/') ||
+          href.startsWith('contact/') ||
+          href.startsWith('index.html')
+        ) {
+          isInternalNavigation = true;
+        }
+      });
+    });
+
+    document.addEventListener('visibilitychange', function () {
       if (titleTimer) {
         clearTimeout(titleTimer);
         titleTimer = null;
       }
 
       if (document.hidden) {
-        document.title = "ヽ(；д； )别走—xun窝";
+        if (!isInternalNavigation) {
+          document.title = "ヽ(；д； )别走—xun窝";
+        }
       } else {
-        document.title = "(≧▽≦)欢迎回家—xun窝";
+        if (!isInternalNavigation) {
+          document.title = "(≧▽≦)欢迎回家—xun窝";
 
-        titleTimer = setTimeout(() => {
-          if (!document.hidden) {
-            document.title = defaultTitle;
-          }
-          titleTimer = null;
-        }, 5000);
+          titleTimer = setTimeout(() => {
+            if (!document.hidden) {
+              document.title = defaultTitle;
+            }
+            titleTimer = null;
+          }, 5000);
+        }
       }
+    });
+
+    window.addEventListener('pageshow', function () {
+      isInternalNavigation = false;
+      if (titleTimer) {
+        clearTimeout(titleTimer);
+        titleTimer = null;
+      }
+      document.title = defaultTitle;
     });
   </script>
 </body>
