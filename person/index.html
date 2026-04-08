@@ -45,7 +45,65 @@
     <h1>个人介绍</h1>
     <p>废物一个</p>
     <p>？</p>
-    <a href="/" class="button">返回首页</a>
+    <a href="../" class="button">返回首页</a>
   </div>
+
+  <script>
+    const defaultTitle = document.title;
+    let titleTimer = null;
+    let isInternalNavigation = false;
+
+    document.querySelectorAll('a[href]').forEach(link => {
+      link.addEventListener('click', function () {
+        const href = this.getAttribute('href');
+        if (!href) return;
+
+        const isExternal =
+          href.startsWith('http://') ||
+          href.startsWith('https://') ||
+          href.startsWith('//') ||
+          href.startsWith('mailto:') ||
+          href.startsWith('tel:') ||
+          this.target === '_blank';
+
+        if (!isExternal) {
+          isInternalNavigation = true;
+        }
+      });
+    });
+
+    document.addEventListener('visibilitychange', function () {
+      if (titleTimer) {
+        clearTimeout(titleTimer);
+        titleTimer = null;
+      }
+
+      if (document.hidden) {
+        if (!isInternalNavigation) {
+          document.title = "ヽ(；д； )别走—xun窝";
+        }
+      } else {
+        if (!isInternalNavigation) {
+          document.title = "(≧▽≦)欢迎回家—xun窝";
+
+          titleTimer = setTimeout(() => {
+            if (!document.hidden) {
+              document.title = defaultTitle;
+            }
+            titleTimer = null;
+          }, 5000);
+        }
+      }
+    });
+
+    window.addEventListener('pageshow', function () {
+      isInternalNavigation = false;
+      if (titleTimer) {
+        clearTimeout(titleTimer);
+        titleTimer = null;
+      }
+      document.title = defaultTitle;
+    });
+  </script>
 </body>
 </html>
